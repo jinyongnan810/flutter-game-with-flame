@@ -4,11 +4,11 @@
 
 import 'dart:math';
 
-import '../util/util.dart';
 import 'package:flame/collisions.dart';
 import 'package:flame/components.dart';
 
 import '../doodle_dash.dart';
+import '../util/util.dart';
 
 /// The supertype for all Platforms, including Enemies
 /// This class adds a hitbox and Collision Callbacks to all subtypes,
@@ -174,8 +174,27 @@ class SpringBoard extends Platform<SpringState> {
 
     current = SpringState.up;
   }
-} 
+}
 
 // Losing the game: Add EnemyPlatformState Enum
+enum EnemyPlatformState { only }
 
 // Losing the game: Add EnemyPlatform class
+class EnemyPlatform extends Platform<EnemyPlatformState> {
+  EnemyPlatform({super.position});
+
+  @override
+  Future<void>? onLoad() async {
+    var randBool = Random().nextBool();
+    var enemySprite = randBool ? 'enemy_trash_can' : 'enemy_error';
+
+    sprites = <EnemyPlatformState, Sprite>{
+      EnemyPlatformState.only:
+          await gameRef.loadSprite('game/$enemySprite.png'),
+    };
+
+    current = EnemyPlatformState.only;
+
+    return super.onLoad();
+  }
+}
