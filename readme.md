@@ -22,6 +22,9 @@ GameWidget(
     'gameOverOverlay': (context, game) => GameOverOverlay(game),
   },
 )
+// add and remove overlay like
+overlays.remove('mainMenuOverlay');
+overlays.add('gameOverOverlay');
 ```
 
 ## Game Control Object
@@ -64,3 +67,59 @@ class World extends ParallaxComponent<DoodleDash> {
 final World _world = World();
 await add(_world);
 ```
+
+## Create characters and objects
+
+```dart
+// 1. create object states
+enum PlayerState {
+  left,
+  right,
+  center,
+  rocket,
+  nooglerCenter,
+  nooglerLeft,
+  nooglerRight
+}
+// 2. create object class with states
+class Player extends SpriteGroupComponent<PlayerState>
+    with HasGameRef<DoodleDash>
+// 3. add like all other objects
+// 4. change appearance according to state
+Future<void> _loadCharacterSprites() async {
+  // Load & configure sprite assets
+  final left = await gameRef.loadSprite('game/${character.name}_left.png');
+  final right = await gameRef.loadSprite('game/${character.name}_right.png');
+  final center =
+      await gameRef.loadSprite('game/${character.name}_center.png');
+  final rocket = await gameRef.loadSprite('game/rocket_4.png');
+  final nooglerCenter =
+      await gameRef.loadSprite('game/${character.name}_hat_center.png');
+  final nooglerLeft =
+      await gameRef.loadSprite('game/${character.name}_hat_left.png');
+  final nooglerRight =
+      await gameRef.loadSprite('game/${character.name}_hat_right.png');
+
+  sprites = <PlayerState, Sprite>{
+    PlayerState.left: left,
+    PlayerState.right: right,
+    PlayerState.center: center,
+    PlayerState.rocket: rocket,
+    PlayerState.nooglerCenter: nooglerCenter,
+    PlayerState.nooglerLeft: nooglerLeft,
+    PlayerState.nooglerRight: nooglerRight,
+  };
+}
+```
+
+## Moving the objects
+
+```dart
+// 1.
+```
+
+## Handling collisions
+
+## User inputs
+
+## Camera and spawning new objects
