@@ -115,7 +115,44 @@ Future<void> _loadCharacterSprites() async {
 ## Moving the objects
 
 ```dart
-// 1.
+// update per frame
+@override
+void update(double dt) {
+  // check is movable
+  if (gameRef.gameManager.isIntro || gameRef.gameManager.isGameOver) return;
+
+  // set velocity in x axis (_hAxisInput came from user input)
+  _velocity.x = _hAxisInput * jumpSpeed;
+  final double dashHorizontalCenter = size.x / 2;
+
+  // take care of walls
+  if (position.x < dashHorizontalCenter) {
+    position.x = gameRef.size.x - (dashHorizontalCenter);
+  }
+  if (position.x > gameRef.size.x - (dashHorizontalCenter)) {
+    position.x = dashHorizontalCenter;
+  }
+
+  // add gravity by add y+ velocity
+  _velocity.y += _gravity;
+
+  // change position by velocity
+  position += _velocity * dt;
+  super.update(dt);
+}
+
+// set immediate velocity by user input
+void jump({double? specialJumpSpeed}) {
+  _velocity.y = specialJumpSpeed != null ? -specialJumpSpeed : -jumpSpeed;
+}
+
+// force position
+void resetPosition() {
+  position = Vector2(
+    (gameRef.size.x - size.x) / 2,
+    (gameRef.size.y - size.y) / 2,
+  );
+}
 ```
 
 ## Handling collisions
