@@ -157,6 +157,39 @@ void resetPosition() {
 
 ## Handling collisions
 
+```dart
+// with HasCollisionDetection on the main game Component
+// to enable the Collision detection inside this Component
+class DoodleDash extends FlameGame
+    with HasKeyboardHandlerComponents, HasCollisionDetection {
+}
+
+// with CollisionCallbacks in the objects
+class Player extends SpriteGroupComponent<PlayerState>
+    with HasGameRef<DoodleDash>, KeyboardHandler, CollisionCallbacks {
+}
+
+// add hitbox to the object on load
+await add(CircleHitbox()); // or RectangleHitbox()
+
+// override onCollision callback
+@override
+void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
+  super.onCollision(intersectionPoints, other);
+
+  // sample of checking opponent's type
+  if (other is EnemyPlatform) {
+    gameRef.onLose();
+    return;
+  }
+  // sample of checking collision directions
+  bool isCollidingVertically =
+      (intersectionPoints.first.y - intersectionPoints.last.y).abs() < 5;
+  // sample of destroying opponent
+  other.removeFromParent();
+}
+```
+
 ## User inputs
 
 ## Camera and spawning new objects
