@@ -192,4 +192,80 @@ void onCollision(Set<Vector2> intersectionPoints, PositionComponent other) {
 
 ## User inputs
 
+```dart
+// with `HasKeyboardHandlerComponents` in the main game component
+class DoodleDash extends FlameGame
+    with HasKeyboardHandlerComponents, HasCollisionDete{}
+
+// with `KeyboardHandler` in the object class
+class Player extends SpriteGroupComponent<PlayerState>
+    with HasGameRef<DoodleDash>, KeyboardHandler, CollisionCallbacks{}
+
+// override onKeyEvent
+@override
+  bool onKeyEvent(RawKeyEvent event, Set<LogicalKeyboardKey> keysPressed) {
+    if (keysPressed.contains(LogicalKeyboardKey.arrowLeft)) {
+      moveLeft();
+      return true;
+    }
+
+    if (keysPressed.contains(LogicalKeyboardKey.arrowRight)) {
+      moveRight();
+      return true;
+    }
+
+    return true;
+  }
+```
+
+### Use normal flutter tapping widget in the game overlay for mobile devices
+
+```dart
+return Positioned(
+  bottom: MediaQuery.of(context).size.height / 4,
+  child: SizedBox(
+    width: MediaQuery.of(context).size.width,
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 24),
+          child: GestureDetector(
+            onTapDown: (details) {
+              (widget.game as DoodleDash).player.moveLeft();
+            },
+            onTapUp: (details) {
+              (widget.game as DoodleDash).player.resetDirection();
+            },
+            child: Material(
+              color: Colors.transparent,
+              elevation: 3.0,
+              shadowColor: Theme.of(context).colorScheme.background,
+              child: const Icon(Icons.arrow_left, size: 64),
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(right: 24),
+          child: GestureDetector(
+            onTapDown: (details) {
+              (widget.game as DoodleDash).player.moveRight();
+            },
+            onTapUp: (details) {
+              (widget.game as DoodleDash).player.resetDirection();
+            },
+            child: Material(
+              color: Colors.transparent,
+              elevation: 3.0,
+              shadowColor: Theme.of(context).colorScheme.background,
+              child: const Icon(Icons.arrow_right, size: 64),
+            ),
+          ),
+        ),
+      ],
+    ),
+  ),
+)
+```
+
 ## Camera and spawning new objects
