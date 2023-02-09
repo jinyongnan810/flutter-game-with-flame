@@ -269,3 +269,50 @@ return Positioned(
 ```
 
 ## Camera and spawning new objects
+
+```dart
+// in main game
+// in update callback
+// update boundaries of camera movement
+final Rect worldBounds = Rect.fromLTRB(
+  0,
+  camera.position.y - screenBufferSpace,
+  camera.gameSize.x,
+  camera.position.y + _world.size.y,
+);
+camera.worldBounds = worldBounds;
+// conditionally follow the object
+var isInTopHalfOfScreen = player.position.y <= (_world.size.y / 2);
+if (!player.isMovingDown && isInTopHalfOfScreen) {
+  camera.followComponent(player);
+}
+// determine events depend on camera and object's relative position
+if (player.position.y >
+    camera.position.y +
+        _world.size.y +
+        player.size.y +
+        screenBufferSpace) {
+  onLose();
+}
+
+// in object that handles spawning objects
+// in update
+// check if some object falls out of game
+final topOfLowestPlatform =
+    _platforms.first.position.y + _tallestPlatformHeight;
+final screenBottom = gameRef.player.position.y +
+    (gameRef.size.y / 2) +
+    gameRef.screenBufferSpace;
+if (topOfLowestPlatform > screenBottom) {
+  // spawn new objects
+  var newPlatY = _generateNextY();
+  var newPlatX = _generateNextX(100);
+  final nextPlat = _semiRandomPlatform(Vector2(newPlatX, newPlatY));
+  add(nextPlat);
+  _platforms.add(nextPlat);
+  gameRef.gameManager.increaseScore();
+  _cleanupPlatforms();
+  _maybeAddEnemy();
+  _maybeAddPowerup();
+}
+```
